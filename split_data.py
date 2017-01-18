@@ -30,7 +30,7 @@ if __name__ == "__main__":
 
     for f in ['train', 'test']:
         f_name = 'output/{}.csv'.format(f)
-        all_data = pd.read_csv(f)
+        all_data = pd.read_csv(f_name)
         all_data['age_bucket'] = pd.cut(all_data['age'], bins=(
             16, 20, 30, 40, 50, 60, 70, 80, 85), include_lowest=True, retbins=False)
         all_data = all_data.drop('age', axis=1)
