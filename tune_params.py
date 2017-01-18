@@ -41,7 +41,7 @@ if __name__ == "__main__":
     logging.basicConfig(filename="output/paramater_tuning.log", level=logging.INFO)
 
     X_train = pd.read_hdf('output/train.h5')
-    cols = all_data.columns.tolist()
+    cols = X_train.columns.tolist()
     cols.remove('duration')
 
     y_train = np.ravel(X_train['duration'])
