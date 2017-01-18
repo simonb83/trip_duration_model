@@ -40,12 +40,12 @@ if __name__ == "__main__":
 
     logging.basicConfig(filename="output/paramater_tuning.log", level=logging.INFO)
 
-    cols = pd.read_csv('output/train_data.csv', nrows=1).columns.tolist()
+    X_train = pd.read_hdf('output/train.h5')
+    cols = all_data.columns.tolist()
     cols.remove('duration')
 
-    X_train = pd.read_csv('output/train_data.csv', usecols=cols)
-    y_train = np.ravel(pd.read_csv(
-        'output/train_data.csv', usecols=['duration']))
+    y_train = np.ravel(X_train['duration'])
+    X_train = X_train.drop('duration', axis=1)
 
     params = {
         'n_estimators': [10, 50, 100, 250, 500, 1000],
@@ -58,9 +58,9 @@ if __name__ == "__main__":
 
     logging.info("Best parameters set found on training set:\n\n{}\n".format(clf.best_params_))
 
-    X_test = pd.read_csv('output/test_data.csv', usecols=cols)
-    y_test = np.ravel(pd.read_csv(
-        'output/test_data.csv', usecols=['duration']))
+    X_test = pd.read_hdf('output/test.h5')
+    y_test = np.ravel(X_test['duration'])
+    X_test = X_test.drop('duration', axis=1)
 
     logging.info("Detailed classification report:\n")
     y_true, y_pred = y_test, clf.predict(X_test)
