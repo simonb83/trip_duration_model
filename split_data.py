@@ -3,6 +3,7 @@ Create all features and split the data into training and test sets.
 """
 
 import pandas as pd
+import numpy as np
 from sklearn.cross_validation import train_test_split
 import sys
 
@@ -26,7 +27,7 @@ if __name__ == "__main__":
     all_data = all_data.drop('id', axis=1)
 
     all_data = pd.get_dummies(
-        all_data, columns=['start_hour', 'month', 'hexagon_id', 'age_bucket'])
+        all_data, columns=['start_hour', 'month', 'hexagon_id', 'age_bucket']).astype(np.int8)
 
     train, test = train_test_split(all_data, test_size=0.2, random_state=0)
 
