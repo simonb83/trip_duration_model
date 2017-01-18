@@ -28,8 +28,9 @@ if __name__ == "__main__":
 
     all_data = pd.get_dummies(
         all_data, columns=['start_hour', 'month', 'hexagon_id', 'age_bucket'], sparse=True)
+    all_data = all_data.to_sparse()
 
     train, test = train_test_split(all_data, test_size=0.2, random_state=0)
 
-    train.to_csv('output/train_data.csv', index=None)
-    test.to_csv('output/test_data.csv', index=None)
+    train.to_dense().to_csv('output/train_data.csv', index=None)
+    test.to_dense().to_csv('output/test_data.csv', index=None)
