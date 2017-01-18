@@ -28,7 +28,8 @@ if __name__ == "__main__":
     all_data.iloc[train_idx].to_csv('output/train.csv')
     all_data.iloc[test_idx].to_csv('output/test.csv')
 
-    for f in ['output/train.csv', 'output/test.csv']:
+    for f in ['train', 'test']:
+        f_name = 'output/{}.csv'.format(f)
         all_data = pd.read_csv(f)
         all_data['age_bucket'] = pd.cut(all_data['age'], bins=(
             16, 20, 30, 40, 50, 60, 70, 80, 85), include_lowest=True, retbins=False)
@@ -52,4 +53,4 @@ if __name__ == "__main__":
             all_data['hex_{}'.format(h)] = all_data['hexagon_id'].apply(lambda x: x == h)
         all_data = all_data.drop('hexagon_id', axis=1)
 
-        all_data.to_csv(f)
+        all_data.to_hdf('output/{}.h5'.format(f), f)
