@@ -27,7 +27,7 @@ if __name__ == "__main__":
     all_data = all_data.drop('id', axis=1)
 
     all_data = pd.get_dummies(
-        all_data, columns=['start_hour', 'month', 'hexagon_id', 'age_bucket']).astype(np.int8)
+        all_data, columns=['start_hour', 'month', 'hexagon_id', 'age_bucket'], sparse=True)
 
     train, test = train_test_split(all_data, test_size=0.2, random_state=0)
 
