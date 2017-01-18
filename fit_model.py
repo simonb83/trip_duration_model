@@ -53,7 +53,7 @@ if __name__ == "__main__":
         'min_samples_leaf': [1, 10, 50]
     }
 
-    clf = RandomForestRegressor(random_state=1, n_estimators=100, max_features='sqrt', min_samples_leaf=10, n_jobs=2)
+    clf = RandomForestRegressor(random_state=1, n_estimators=10, max_features='sqrt', min_samples_leaf=10, n_jobs=2)
     clf.fit(X_train, y_train)
 
     logging.info("Best parameters set found on training set:\n\n{}\n".format(clf.get_params))
