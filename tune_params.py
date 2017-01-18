@@ -49,7 +49,7 @@ if __name__ == "__main__":
         'min_samples_leaf': [1, 10, 50]
     }
 
-    clf = GridSearchCV(RandomForestRegressor(random_state=1), params, cv=5, n_jobs=1)
+    clf = GridSearchCV(RandomForestRegressor(random_state=1), params, cv=5, n_jobs=4)
     clf.fit(X_train, y_train)
 
     logging.info("Best parameters set found on training set:\n\n{}\n".format(clf.best_params_))
