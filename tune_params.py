@@ -18,6 +18,7 @@ from sklearn.ensemble import RandomForestRegressor
 from sklearn.grid_search import GridSearchCV
 from sklearn.metrics import r2_score, median_absolute_error, mean_squared_error, mean_absolute_error
 import logging
+import sys
 
 
 def regression_report(y_true, y_pred):
@@ -34,6 +35,9 @@ def regression_report(y_true, y_pred):
 
 
 if __name__ == "__main__":
+
+    n_jobs = int(sys.argv[1])
+
     logging.basicConfig(filename="output/paramater_tuning.log", level=logging.INFO)
 
     cols = pd.read_csv('output/train_data.csv', nrows=1).columns.tolist()
@@ -49,7 +53,7 @@ if __name__ == "__main__":
         'min_samples_leaf': [1, 10, 50]
     }
 
-    clf = GridSearchCV(RandomForestRegressor(random_state=1), params, cv=5, n_jobs=4)
+    clf = GridSearchCV(RandomForestRegressor(random_state=1), params, cv=5, n_jobs=n_jobs)
     clf.fit(X_train, y_train)
 
     logging.info("Best parameters set found on training set:\n\n{}\n".format(clf.best_params_))
