@@ -14,7 +14,7 @@ The aim is to predict bicycle trip duration in seconds based on the following fe
 import pandas as pd
 import numpy as np
 import sklearn
-from sklearn.ensemble import RandomForestRegressor
+from sklearn.linear_model import SGDRegressor
 from sklearn.grid_search import GridSearchCV
 from sklearn.metrics import r2_score, median_absolute_error, mean_squared_error, mean_absolute_error
 import logging
@@ -36,34 +36,42 @@ def regression_report(y_true, y_pred):
 
 if __name__ == "__main__":
 
-    n_jobs = int(sys.argv[1])
-
     logging.basicConfig(filename="output/paramater_tuning.log", level=logging.INFO)
 
-    X_train = pd.read_hdf('output/train.h5')
-    cols = X_train.columns.tolist()
-    cols.remove('duration')
+    #Initialize the model
+    clf = SGDRegressor()
 
-    y_train = np.ravel(X_train['duration'])
-    X_train = X_train.drop('duration', axis=1)
+    logging.info("Starting training")
+    i = 1
+    # Iterate over the training data
+    for chunk in pd.read_hdf('output/train.h5', chunksize=100000):
+        logging.info("Processing chunk {}".format(i))
+        cols = chunk.columns.tolist()
+        cols.remove('duration')
+        y = np.ravel(chunk['duration'])
+        chunk = chunk.drop('duration', axis=1)
 
-    params = {
-        'n_estimators': [10, 50, 100, 250, 500, 1000],
-        'max_features': ['auto', 'sqrt', 0.5],
-        'min_samples_leaf': [1, 10, 50]
-    }
+        clf.partial_fit(chunk, y)
+        i += 1
 
-    clf = RandomForestRegressor(random_state=1, n_estimators=10, max_features='sqrt', min_samples_leaf=10, n_jobs=2)
-    clf.fit(X_train, y_train)
+    logging.info("Parameters used on training set:\n\n{}\n".format(clf.get_params))
 
-    logging.info("Best parameters set found on training set:\n\n{}\n".format(clf.get_params))
 
-    X_test = pd.read_hdf('output/test.h5')
-    y_test = np.ravel(X_test['duration'])
-    X_test = X_test.drop('duration', axis=1)
+    logging.info("Starting test run")
+    i = 1
+    # Make some predictions also in chunks
+    for chunk in pd.read_hdf('output/test.h5', chunksize=100000):
+        logging.info("Processing chunk {}".format(i))
+        cols = chunk.columns.tolist()
+        cols.remove('duration')
+        y = np.ravel(chunk['duration'])
+        chunk = chunk.drop('duration', axis=1)
+
+        y_pred = clf.predict(chunk)
+        df = pd.DataFrame(np.array([y, y_pred]).T, columns=['True', 'Predicted'])
+        df.to_hdf('output/predicted.h5', 'predicted', append=True, format='t')
+        i += 1
 
     logging.info("Detailed classification report:\n")
-    y_true, y_pred = y_test, clf.predict(X_test)
-    logging.info(regression_report(y_true, y_pred))
-
-    np.save("output/predictions.npy", y_pred)
+    df = pd.read_hdf('output/predicted.h5')
+    logging.info(regression_report(df['True'], df['Predicted']))
