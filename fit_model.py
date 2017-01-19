@@ -38,14 +38,17 @@ if __name__ == "__main__":
 
     logging.basicConfig(filename="output/fit_model.log", level=logging.INFO)
 
+    lr = float(sys.argv[0])
+
     #Initialize the model
-    clf = SGDRegressor(eta0=0.00001)
+    clf = SGDRegressor(eta0=lr)
 
     logging.info("Starting training")
     i = 1
     # Iterate over the training data
     for chunk in pd.read_hdf('output/train.h5', chunksize=100000):
         logging.info("Processing chunk {}".format(i))
+        chunk = chunk.drop('Unnamed: 0', axis=1)
         cols = chunk.columns.tolist()
         cols.remove('duration')
         y = np.ravel(chunk['duration'])
@@ -62,6 +65,7 @@ if __name__ == "__main__":
     # Make some predictions also in chunks
     for chunk in pd.read_hdf('output/test.h5', chunksize=100000):
         logging.info("Processing chunk {}".format(i))
+        chunk = chunk.drop('Unnamed: 0', axis=1)
         cols = chunk.columns.tolist()
         cols.remove('duration')
         y = np.ravel(chunk['duration'])
