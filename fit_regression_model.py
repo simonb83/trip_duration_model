@@ -15,6 +15,7 @@ import pandas as pd
 import numpy as np
 from sklearn.linear_model import SGDRegressor
 from sklearn.metrics import r2_score, median_absolute_error, mean_squared_error, mean_absolute_error
+from sklearn.externals import joblib
 import logging
 import argparse
 
@@ -90,6 +91,9 @@ if __name__ == "__main__":
         df.to_hdf('output/predicted.h5', 'predicted', append=True, format='t')
         i += 1
 
-    logging.info("Detailed classification report:\n")
+    logging.info("Save model to disk:\n")
+    joblib.dump(clf, 'models/regressor/regressor.pkl') 
+    logging.info("Detailed Regression report:\n")
     df = pd.read_hdf('output/predicted.h5')
     logging.info(regression_report(df['True'], df['Predicted']))
+    

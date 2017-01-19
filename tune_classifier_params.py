@@ -112,7 +112,6 @@ if __name__ == "__main__":
                     logging.info("Training")
                     # Train using chunks
                     for chunk in chunks(train_index, chunksize):
-                        logging.info(chunk)
                         X = pd.read_hdf('output/train.h5',
                                         'train', where=pd.Index(chunk))
                         X = X.drop('Unnamed: 0', axis=1)

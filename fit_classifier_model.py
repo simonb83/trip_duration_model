@@ -15,6 +15,7 @@ import pandas as pd
 import numpy as np
 from sklearn.linear_model import SGDClassifier
 from sklearn.metrics import classification_report
+from sklearn.externals import joblib
 import logging
 import argparse
 
@@ -102,6 +103,8 @@ if __name__ == "__main__":
         df.to_hdf('output/predicted_class.h5', 'predicted_class', append=True, format='t')
         i += 1
 
+    logging.info("Save model to disk:\n")
+    joblib.dump(clf, 'models/classifier/classifier.pkl')
     logging.info("Detailed classification report:\n")
     df = pd.read_hdf('output/predicted_class.h5')
     logging.info(classification_report(df['True'], df['Predicted']), target_names=all_classes)
