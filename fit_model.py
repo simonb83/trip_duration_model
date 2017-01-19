@@ -39,7 +39,7 @@ if __name__ == "__main__":
     logging.basicConfig(filename="output/fit_model.log", level=logging.INFO)
 
     #Initialize the model
-    clf = SGDRegressor()
+    clf = SGDRegressor(eta0=0.00001)
 
     logging.info("Starting training")
     i = 1
