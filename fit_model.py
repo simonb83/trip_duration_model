@@ -36,7 +36,7 @@ def regression_report(y_true, y_pred):
 
 if __name__ == "__main__":
 
-    logging.basicConfig(filename="output/paramater_tuning.log", level=logging.INFO)
+    logging.basicConfig(filename="output/fit_model.log", level=logging.INFO)
 
     #Initialize the model
     clf = SGDRegressor()
