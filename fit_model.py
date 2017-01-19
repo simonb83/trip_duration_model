@@ -38,7 +38,7 @@ if __name__ == "__main__":
 
     logging.basicConfig(filename="output/fit_model.log", level=logging.INFO)
 
-    lr = float(sys.argv[0])
+    lr = float(sys.argv[1])
 
     #Initialize the model
     clf = SGDRegressor(eta0=lr)
