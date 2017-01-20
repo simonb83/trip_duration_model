@@ -41,7 +41,7 @@ def clean_chunk(df, hexagons):
     cols.remove('duration')
     cols.remove('temp')
     cols.remove('dow_')
-    for i in (1, 13):
+    for i in range(1, 13):
         cols.remove("month_{}".format(i))
     for h in hexagons:
         cols.remove("hex_{}".format(h))
