@@ -9,7 +9,9 @@ import sys
 import logging
 
 def process_data(df):
-    df[['month', 'hexagon_id', 'start_hour']] = df[['month', 'hexagon_id', 'start_hour']].astype(np.dtype('i4'))
+    df = df.drop('temp', axis=1)
+
+    df[['month', 'start_hour']] = df[['month', 'start_hour']].astype(np.dtype('i4'))
 
     for i in range(1, 13):
         df['month_{}'.format(i)] = df['month'].apply(lambda x: x == i)
@@ -18,14 +20,6 @@ def process_data(df):
     for i in [0] + [i for i in range(5, 24)]:
         df['hour_{}'.format(i)] = df['start_hour'].apply(lambda x: x == i)
     df = df.drop('start_hour', axis=1)
-
-    for h in hexagons:
-        df['hex_{}'.format(h)] = df['hexagon_id'].apply(lambda x: x == h)
-    df = df.drop('hexagon_id', axis=1)
-
-    for d in range(7):
-        df['dow_'.format(d)] = df['dow'].apply(lambda x: x == d)
-    df = df.drop('dow', axis=1)
 
     return df
 
@@ -41,7 +35,7 @@ if __name__ == "__main__":
 
     all_data = pd.read_csv('data/model_data.csv', nrows=num_rows)
     logging.info("Loaded data")
-    all_data = all_data[all_data['age'] <= 85]
+    all_data = all_data[(all_data['age'] <= 65) & (all_data['age'] >= 16)]
     all_data = all_data[all_data['hexagon_id'].notnull()]
     all_data = all_data.drop('id', axis=1)
     all_data = all_data.dropna()
@@ -66,11 +60,6 @@ if __name__ == "__main__":
     all_data['age'] = all_data['age'].astype(np.float)
     age_scaler.fit(np.array(all_data['age']).reshape(-1, 1))
     all_data['age'] = age_scaler.transform(np.array(all_data['age']).reshape(-1, 1))
-    logging.info("Scaling training data - temp")
-    temp_scaler = StandardScaler()
-    all_data['temp'] = all_data['temp'].astype(np.float)
-    temp_scaler.fit(np.array(all_data['temp']).reshape(-1, 1))
-    all_data['temp'] = temp_scaler.transform(np.array(all_data['temp']).reshape(-1, 1))
     logging.info("Shuffling columns")
     new_cols = all_data.columns.tolist()
     new_cols.remove('duration')
@@ -90,9 +79,6 @@ if __name__ == "__main__":
     logging.info("Scaling test data - age")
     all_data['age'] = all_data['age'].astype(np.float)
     all_data['age'] = age_scaler.transform(np.array(all_data['age']).reshape(-1, 1))
-    logging.info("Scaling test data - temp")
-    all_data['temp'] = all_data['temp'].astype(np.float)
-    all_data['temp'] = temp_scaler.transform(np.array(all_data['temp']).reshape(-1, 1))
 
     all_data = all_data[new_cols]
     logging.info("Saving test data to disk")
