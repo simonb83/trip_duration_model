@@ -43,8 +43,8 @@ def clean_chunk(df, hexagons):
     cols.remove('dow_')
     for i in range(1, 13):
         cols.remove("month_{}".format(i))
-    # for h in hexagons:
-    #     cols.remove("hex_{}".format(h))
+    for h in hexagons:
+        cols.remove("hex_{}".format(h))
     df = df[(df['duration'] > 60) & (df['duration'] < 3600)]
     y = np.ravel(df['duration'])
     return df[cols], y
