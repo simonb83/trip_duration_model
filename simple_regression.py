@@ -51,8 +51,6 @@ def clean_chunk(df, hexagons):
     return df[cols], y
 
 
-    y = np.ravel(chunk['duration'])
-
 if __name__ == "__main__":
 
     logging.basicConfig(filename="output/simple_model.log", level=logging.INFO)
