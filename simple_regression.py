@@ -46,7 +46,6 @@ def clean_chunk(df, hexagons):
     for h in hexagons:
         cols.remove("hex_{}".format(h))
     df = df[(df['duration'] > 60) & (df['duration'] < 3600)]
-    df = df[(df['age'] > 16) & (df['age'] <= 65)]
     y = np.ravel(df['duration'])
     return df[cols], y
 
