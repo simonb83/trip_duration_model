@@ -84,7 +84,7 @@ if __name__ == "__main__":
     i = 1
     for chunk in pd.read_hdf('output/train.h5', chunksize=chunksize):
         logging.info("Training with chunk {}".format(i))
-        X, y = clean_chunk(chunk)
+        X, y = clean_chunk(chunk, hexagons)
         clf.partial_fit(X, y)
         i += 1
 
@@ -92,9 +92,9 @@ if __name__ == "__main__":
     # Make some predictions also in chunks
     for chunk in pd.read_hdf('output/test.h5', chunksize=chunksize):
         logging.info("Testing with chunk {}".format(i))
-        X, y = clean_chunk(chunk)
+        X, y = clean_chunk(chunk, hexagons)
 
-        y_pred = clf.predict(chunk)
+        y_pred = clf.predict(X)
         df = pd.DataFrame(np.array([y, y_pred]).T,
                           columns=['True', 'Predicted'])
         df.to_hdf('output/predicted.h5', 'predicted', append=True, format='t')
