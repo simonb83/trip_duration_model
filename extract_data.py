@@ -18,13 +18,13 @@ if __name__ == "__main__":
     EXTRACT(HOUR FROM trips.start_time) AS start_hour,
     EXTRACT(MONTH FROM trips.start_time) AS month,
     trips.trip_duration AS duration,
-    stations.hexagon_id AS hexagon_id,
-    (SELECT temperature FROM weather_observations w WHERE date(w.measurement_date) = date(trips.start_time)
-    ORDER BY abs( EXTRACT(HOUR FROM w.measurement_date) -  EXTRACT(HOUR FROM trips.start_time)) LIMIT 1) AS temp
+    stations.hexagon_id AS hexagon_id
     FROM trips, stations
     WHERE trips.start_station_id = stations.id
     AND trips.start_station_id <= 452
-    AND trips.age <= 85
+    AND trips.trip_duration > 60
+    AND trips.trip_duration <= 3600
+    AND trips.age <= 65
     AND date(trips.start_time) >= '2014-01-01'
     AND date(trips.start_time) < '2016-08-01';"""
     cur.execute(sql)
