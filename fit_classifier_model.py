@@ -108,4 +108,4 @@ if __name__ == "__main__":
     logging.info("Detailed classification report:\n")
     df = pd.read_hdf('output/predicted_class.h5')
     logging.info(classification_report(df['True'], df[
-                 'Predicted']), target_names=all_classes)
+                 'Predicted']))
