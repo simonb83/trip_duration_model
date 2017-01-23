@@ -88,7 +88,7 @@ if __name__ == "__main__":
     nrows = store.get_storer('test').nrows
     r = np.random.randint(0, nrows, size=test_sample)
     data = pd.read_hdf('output/test.h5', 'test', where=pd.Index(r))
-    data = pre_process_data(data)
+    data = pre_process_data(data, hexagons)
 
     test_X, test_y = parse_data(data)
     logging.info("Columns: \n")
