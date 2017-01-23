@@ -32,11 +32,12 @@ def duration_classes(x):
         return 4
 
 
-def pre_process_data(data):
+def pre_process_data(data, hexagons):
     data['duration'] = data['duration'].apply(lambda x: duration_classes(x))
+    data.drop('Unnamed: 0', axis=1, inplace=True)
     data.reset_index(inplace=True, drop=True)
     for h in hexagons:
-        data.drop("hex_{}".format(h), axis=1)
+        data.drop("hex_{}".format(h), axis=1, inplace=True)
     return data
 
 
@@ -77,7 +78,7 @@ if __name__ == "__main__":
     nrows = store.get_storer('train').nrows
     r = np.random.randint(0, nrows, size=train_sample)
     data = pd.read_hdf('output/train.h5', 'train', where=pd.Index(r))
-    data = pre_process_data(data)
+    data = pre_process_data(data, hexagons)
 
     train_X, train_y = parse_data(data)
     clf.fit(train_X, train_y)
