@@ -22,11 +22,11 @@ import argparse
 
 
 def duration_classes(x):
-    if x <= 60 * 15:
+    if x <= 60 * 10:
         return 1
-    if x <= 60 * 30:
+    if x <= 60 * 20:
         return 2
-    if x <= 60 * 45:
+    if x <= 60 * 30:
         return 3
     if x <= 60 * 60:
         return 4
@@ -35,6 +35,8 @@ def duration_classes(x):
 def pre_process_data(data):
     data['duration'] = data['duration'].apply(lambda x: duration_classes(x))
     data.reset_index(inplace=True, drop=True)
+    for h in hexagons:
+        data.drop("hex_{}".format(h), axis=1)
     return data
 
 
@@ -47,6 +49,7 @@ if __name__ == "__main__":
 
     logging.basicConfig(
         filename="output/fit_classifier_model.log", level=logging.INFO)
+    hexagons = pd.read_csv('data/hexagons.csv', header=None)[0].tolist()
 
     parser = argparse.ArgumentParser()
     parser.add_argument(
@@ -64,11 +67,12 @@ if __name__ == "__main__":
     train_sample = int(args.sample)
     test_sample = int(args.test)
 
-    class_weights = {1: 0.708, 2: 0.237, 3: 0.049, 4: 0.006}
+    class_weights = {1: 0.49, 2: 0.34, 3: 0.11, 4: 0.06}
 
     clf = RandomForestClassifier(
         n_estimators=n_estimators, max_features=features, class_weight=class_weights)
 
+    logging.info("Start training")
     store = pd.HDFStore('output/train.h5')
     nrows = store.get_storer('train').nrows
     r = np.random.randint(0, nrows, size=train_sample)
@@ -78,6 +82,7 @@ if __name__ == "__main__":
     train_X, train_y = parse_data(data)
     clf.fit(train_X, train_y)
 
+    logging.info("Start testing")
     store = pd.HDFStore('output/test.h5')
     nrows = store.get_storer('test').nrows
     r = np.random.randint(0, nrows, size=test_sample)
@@ -87,6 +92,8 @@ if __name__ == "__main__":
     test_X, test_y = parse_data(data)
     clf.fit(train_X, train_y)
     y_pred = clf.predict(test_X)
+
+    logging.info("Model score: {}".format(clf.score(test_X, test_y)))
 
     df = pd.DataFrame(np.array([test_y, y_pred]).T,
                       columns=['True', 'Predicted'])
