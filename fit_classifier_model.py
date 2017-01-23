@@ -75,7 +75,7 @@ if __name__ == "__main__":
     data = pd.read_hdf('output/train.h5', 'train', where=pd.Index(r))
     data = pre_process_data(data)
 
-    train_X, train_y = parse_data(train_data)
+    train_X, train_y = parse_data(data)
     clf.fit(train_X, train_y)
 
     store = pd.HDFStore('output/test.h5')
@@ -84,7 +84,7 @@ if __name__ == "__main__":
     data = pd.read_hdf('output/test.h5', 'test', where=pd.Index(r))
     data = pre_process_data(data)
 
-    test_X, test_y = parse_data(train_data)
+    test_X, test_y = parse_data(data)
     clf.fit(train_X, train_y)
     y_pred = clf.predict(test_X)
 
