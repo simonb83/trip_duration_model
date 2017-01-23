@@ -90,7 +90,8 @@ if __name__ == "__main__":
     data = pre_process_data(data)
 
     test_X, test_y = parse_data(data)
-    clf.fit(train_X, train_y)
+    logging.info("Columns: \n")
+    logging.data(test_X.columns.tolist())
     y_pred = clf.predict(test_X)
 
     logging.info("Model score: {}".format(clf.score(test_X, test_y)))
@@ -100,6 +101,9 @@ if __name__ == "__main__":
     df.to_hdf('output/predicted_class.h5',
               'predicted_class', append=True, format='t')
 
+
+    logging.info("Save model to disk:\n")
+    joblib.dump(clf, 'models/classifier.pkl') 
     logging.info("Detailed classification report:\n")
     df = pd.read_hdf('output/predicted_class.h5')
     logging.info(classification_report(df['True'], df[
