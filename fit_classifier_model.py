@@ -70,7 +70,7 @@ if __name__ == "__main__":
     class_weights = {1: 0.49, 2: 0.34, 3: 0.11, 4: 0.06}
 
     clf = RandomForestClassifier(
-        n_estimators=n_estimators, max_features=features, class_weight=class_weights)
+        n_estimators=n_estimators, max_features=features, class_weight=class_weights, random_state=1)
 
     logging.info("Start training")
     store = pd.HDFStore('output/train.h5')
@@ -91,7 +91,7 @@ if __name__ == "__main__":
 
     test_X, test_y = parse_data(data)
     logging.info("Columns: \n")
-    logging.data(test_X.columns.tolist())
+    logging.info(test_X.columns.tolist())
     y_pred = clf.predict(test_X)
 
     logging.info("Model score: {}".format(clf.score(test_X, test_y)))
